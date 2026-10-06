@@ -1,0 +1,33 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install host core from pinned SHA + provider
+        env:
+          # Pinned to the core commit that publishes governance.conformance.
+          # Update deliberately when rebasing against a newer ecosystem-proof SHA.
+          CORE_SHA: 25edd51e9cfc8d8217be0685ae9a1d0aaa627db1
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install "collibra-governance-automation @ git+https://github.com/adrianmartnez/collibra-governance-automation.git@${CORE_SHA}"
+          python -m pip install -e ".[dev]"
+      - name: Conformance
+        run: pytest -q
+      - name: Discovery + impact smoke
+        run: |
+          python -c "from governance.providers import discover_providers; p=discover_providers().get('example.catalog'); assert p.descriptor.provider_id=='example.catalog'"
+          governance impact --config sample/governance.yaml --namespace demo --changes sample/changes.json --output sample/impact-out.json --format json
+          python -c "import json; p=json.load(open('sample/impact-out.json',encoding='utf-8')); assert p['result_version']=='1'; assert p['writes_performed']==0"
