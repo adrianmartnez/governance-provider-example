@@ -3,6 +3,10 @@
 Independent Python distribution that registers `example.catalog` through the
 public `governance.providers` entry-point group.
 
+This package is a reference/example provider and reusable template. It is not a
+vendor certification. Full conformance validates cooperative observable behavior,
+not security.
+
 ## Capabilities
 
 - `governance_graph`
@@ -12,19 +16,25 @@ No `metadata_discovery` (therefore not used with `governance check`).
 
 ## Requires
 
-A host install of `collibra-governance-automation` that provides Provider SDK API `1`
-(`governance.providers`, `governance.domain`, `governance.conformance`).
+Host package: `collibra-governance-automation` **2.0.0** (Provider SDK API `"1"`).
 
-Until v2.0 is published on PyPI, install the core from an exact Git commit SHA
-(see CI). Do **not** depend on `collibra-governance-automation>=1.4` — published
-1.4.0 does not include the Provider SDK.
+This companion package version remains **0.1.0**. Compatibility is declared by the
+provider descriptor (`sdk_compatibility = ">=1,<2"`), not by a pip dependency on
+the host.
+
+PyPI publication of the host is **not assumed**. Install the published Git tag:
+
+```bash
+pip install "collibra-governance-automation @ git+https://github.com/adrianmartnez/collibra-governance-automation.git@v2.0.0"
+pip install .
+```
 
 ## Install (development)
 
 ```bash
 python -m venv .venv
 source .venv/bin/activate
-pip install "collibra-governance-automation @ git+https://github.com/adrianmartnez/collibra-governance-automation.git@<EXACT_SHA>"
+pip install "collibra-governance-automation @ git+https://github.com/adrianmartnez/collibra-governance-automation.git@v2.0.0"
 pip install -e ".[dev]"
 pytest
 ```
@@ -44,3 +54,10 @@ Do not pass `--odcs` / `--dbt-manifest` / `--openlineage`.
 ## Trust
 
 Installed providers are trusted Python dependencies. This package is not sandboxed.
+
+## Links
+
+- Core release: https://github.com/adrianmartnez/collibra-governance-automation/releases/tag/v2.0.0
+- Provider SDK docs: https://github.com/adrianmartnez/collibra-governance-automation/tree/v2.0.0/docs/providers
+- Author guide: https://github.com/adrianmartnez/collibra-governance-automation/blob/v2.0.0/docs/providers/author-guide.md
+- Migration guide: https://github.com/adrianmartnez/collibra-governance-automation/blob/v2.0.0/docs/providers/migration-v1.4-to-v2.md
